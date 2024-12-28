@@ -1,0 +1,9 @@
+<div class="container">
+  <!--@for(post of (blogStore.$getPosts() | keyvalue); track 'post-' + $index) {
+    <h1>{{post.value.body}}</h1>
+    <h2>Comments</h2>
+    @for (comment of blogStore.getCommentsByPost(post.value.id)(); track 'comment' + $index) {
+      {{comment.comment}}
+    }
+  }-->
+</div>
