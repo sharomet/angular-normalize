@@ -14,6 +14,7 @@ export class BlogStore {
   authorsSignal: WritableSignal<IAuthorStore> = signal<IAuthorStore>({} as IAuthorStore)
   postsSignal: WritableSignal<IPostStore> = signal<IPostStore>({} as IPostStore)
   commentsSignal: WritableSignal<ICommentStore> = signal<ICommentStore>({} as ICommentStore)
+  initBlogSignal: WritableSignal<boolean> = signal<boolean>(false)
 
   initialize(data: any[]) {
     const authors: IAuthorStore = {
@@ -59,11 +60,12 @@ export class BlogStore {
     this.authorsSignal.set(authors)
     this.postsSignal.set(posts)
     this.commentsSignal.set(comments)
+    this.initBlogSignal.set(true);
   }
 
-  allPosts() {
-    return computed(() =>
-      this.postsSignal().allIds.map(id => this.postsSignal().byId[id])
+  allPosts(): Signal<IPost[]> {
+    return computed(
+      () => this.initBlogSignal() ? this.postsSignal().allIds.map(id => this.postsSignal().byId[id]) : []
     )
   };
 

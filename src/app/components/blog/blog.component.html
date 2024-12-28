@@ -1,4 +1,8 @@
 <div class="container">
+@for(post of this.blogStore.allPosts()(); track post.id) {
+  <h1>{{post.body}}</h1>
+  <h2>Comments</h2>
+}
   <!--@for(post of (blogStore.$getPosts() | keyvalue); track 'post-' + $index) {
     <h1>{{post.value.body}}</h1>
     <h2>Comments</h2>
