@@ -1,13 +1,10 @@
 <div class="container">
-@for(post of this.blogStore.allPosts()(); track post.id) {
-  <h1>{{post.body}}</h1>
+  @for (post of this.blogStore.allPosts(); track post.id) {
+  <h1>{{ post.body }}</h1>
   <h2>Comments</h2>
-}
-  <!--@for(post of (blogStore.$getPosts() | keyvalue); track 'post-' + $index) {
-    <h1>{{post.value.body}}</h1>
-    <h2>Comments</h2>
-    @for (comment of blogStore.getCommentsByPost(post.value.id)(); track 'comment' + $index) {
-      {{comment.comment}}
+    @for (comment of this.blogStore.getCommentsForPost(post.id); track comment.id) {
+      <p>{{comment.id}}</p>
+      <p>{{comment.comment}}</p>
     }
-  }-->
+}
 </div>

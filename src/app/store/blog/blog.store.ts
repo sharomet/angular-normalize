@@ -63,19 +63,44 @@ export class BlogStore {
     this.initBlogSignal.set(true);
   }
 
-  allPosts(): Signal<IPost[]> {
+  private allPostsComputed(): Signal<IPost[]> {
     return computed(
       () => this.initBlogSignal() ? this.postsSignal().allIds.map(id => this.postsSignal().byId[id]) : []
     )
   };
 
-  getCommentsForPost(postId: string) {
+  allPosts(): IPost[] {
+    return this.allPostsComputed()();
+  }
+
+  private getCommentsComputed(postId: string) {
     return computed(() =>
       this.postsSignal().byId[postId].comments.map(commentId => this.commentsSignal().byId[commentId])
     );
   }
 
+  getCommentsForPost(postId: string) {
+    return this.getCommentsComputed(postId)();
+  }
+
+  private getAuthorComputed(authorId: string) {
+    return computed(() => this.authorsSignal().byId[authorId]);
+  }
+
   getAuthorById(authorId: string) {
-    computed(() => this.authorsSignal().byId[authorId]);
+    return this.getAuthorComputed(authorId)()
+  }
+
+  updatePost(id: string, body: string) {
+    const currentPosts = this.postsSignal();
+    if (currentPosts.byId[id]) {
+      this.postsSignal.update((value) => ({
+        ...value,
+        byId: {
+          ...value.byId,
+          [id]: {...value.byId[id], body: body}
+        }
+      }));
+    }
   }
 }
