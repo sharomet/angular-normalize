@@ -14,7 +14,7 @@ export class BlogComponent implements OnInit {
 
   ngOnInit(): void {
     this.blogStore.initialize(responseData);
-    /*const data = this.blogStore.getCommentsByPost('0F94E346-01D0-46CD-8A42-37BE4F865394');
-    console.log(data())*/
+    const data = this.blogStore.getCommentsForPost('0F94E346-01D0-46CD-8A42-37BE4F865394');
+    console.log(data())
   }
 }

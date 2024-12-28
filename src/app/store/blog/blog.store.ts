@@ -1,4 +1,4 @@
-import {Injectable, Signal, signal, WritableSignal} from '@angular/core';
+import {computed, Injectable, Signal, signal, WritableSignal} from '@angular/core';
 import {ICommentStore, IPostStore, IAuthorStore, IPost, IAuthor, IComment} from './blog';
 
 interface NormalizedData {
@@ -11,13 +11,9 @@ interface NormalizedData {
   providedIn: 'root'
 })
 export class BlogStore {
-  authors: WritableSignal<IAuthorStore> = signal<IAuthorStore>({} as IAuthorStore)
-  posts: WritableSignal<IPostStore> = signal<IPostStore>({} as IPostStore)
-  comments: WritableSignal<ICommentStore> = signal<ICommentStore>({} as ICommentStore)
-
-  public readonly $getPosts = this.posts.asReadonly();
-  public readonly $getComments = this.comments.asReadonly();
-  public readonly $getAuthors = this.authors.asReadonly();
+  authorsSignal: WritableSignal<IAuthorStore> = signal<IAuthorStore>({} as IAuthorStore)
+  postsSignal: WritableSignal<IPostStore> = signal<IPostStore>({} as IPostStore)
+  commentsSignal: WritableSignal<ICommentStore> = signal<ICommentStore>({} as ICommentStore)
 
   initialize(data: any[]) {
     const authors: IAuthorStore = {
@@ -60,16 +56,24 @@ export class BlogStore {
       posts.allIds.push(post.id);
     });
 
-    this.authors.set(authors)
-    this.posts.set(posts)
-    this.comments.set(comments)
+    this.authorsSignal.set(authors)
+    this.postsSignal.set(posts)
+    this.commentsSignal.set(comments)
   }
 
-  /*getCommentsByPost(postId: string): Signal<ICommentStore[]> {
-    const post = this.$getPosts()[postId];
-    if (!post) {
-      return signal([])
-    }
-    return signal(post.comments.map(commentId => this.$getComments()[commentId]));
-  }*/
+  allPosts() {
+    return computed(() =>
+      this.postsSignal().allIds.map(id => this.postsSignal().byId[id])
+    )
+  };
+
+  getCommentsForPost(postId: string) {
+    return computed(() =>
+      this.postsSignal().byId[postId].comments.map(commentId => this.commentsSignal().byId[commentId])
+    );
+  }
+
+  getAuthorById(authorId: string) {
+    computed(() => this.authorsSignal().byId[authorId]);
+  }
 }
