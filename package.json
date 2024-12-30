@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "data": "json-server ./data/data.json"
+    "data": "json-server ./data/data.json",
+    "socket": "node websocket-server.js"
   },
   "private": true,
   "dependencies": {
@@ -22,6 +23,7 @@
     "json-server": "^1.0.0-beta.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "ws": "^8.18.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

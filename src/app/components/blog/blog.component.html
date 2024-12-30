@@ -1,4 +1,5 @@
 <div class="container">
+  <button type="button" (click)="sendMessage()">Send Message</button>
   @for (post of this.blogStore.allPosts(); track post.id) {
     <h1>{{ post.body }}</h1>
     <h2>Comments</h2>
