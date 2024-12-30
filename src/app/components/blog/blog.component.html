@@ -1,10 +1,10 @@
 <div class="container">
   @for (post of this.blogStore.allPosts(); track post.id) {
-  <h1>{{ post.body }}</h1>
-  <h2>Comments</h2>
+    <h1>{{ post.body }}</h1>
+    <h2>Comments</h2>
     @for (comment of this.blogStore.getCommentsForPost(post.id); track comment.id) {
-      <p>{{comment.id}}</p>
-      <p>{{comment.comment}}</p>
+      <p>{{ comment.id }}</p>
+      <p>{{ comment.comment }}</p>
     }
-}
+  }
 </div>

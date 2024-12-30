@@ -1,6 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {AppService} from './app.service';
-import {responseData} from './responseData';
+import {Component} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 
 @Component({
@@ -9,10 +7,5 @@ import {RouterOutlet} from '@angular/router';
   standalone: true,
   imports: [RouterOutlet]
 })
-export class AppComponent implements OnInit {
-  private readonly appService: AppService = inject(AppService);
-
-  ngOnInit() {
-    this.appService.initialize(responseData);
-  }
+export class AppComponent {
 }
