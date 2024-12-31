@@ -1,12 +1,10 @@
 const WebSocket = require('ws');
+const port = process.env.PORT || 8055;
 
-const wss = new WebSocket.Server({ port: 8055 });
+const wss = new WebSocket.Server({port});
 
 wss.on('connection', (ws) => {
   console.log('Client connected');
-
-  ws.send('Websocket Server');
-
   ws.on('message', (message) => {
     console.log(`Message: ${message}`);
     wss.clients.forEach((client) => {
@@ -17,4 +15,4 @@ wss.on('connection', (ws) => {
   });
 });
 
-console.log('WebSocket port 8055');
+console.log(`WebSocket port ${port}`);

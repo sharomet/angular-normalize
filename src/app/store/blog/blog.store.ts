@@ -1,5 +1,14 @@
 import {computed, Injectable, Signal, signal, WritableSignal} from '@angular/core';
-import {ICommentStore, IPostStore, IAuthorStore, IPost, IAuthor, IComment} from './blog';
+import {
+  ICommentStore,
+  IPostStore,
+  IAuthorStore,
+  IPostModel,
+  IAuthorModel,
+  ICommentModel,
+  ICommentData,
+  IBlogStore
+} from './blog';
 
 interface NormalizedData {
   posts: Record<string, IPostStore>;
@@ -15,6 +24,7 @@ export class BlogStore {
   postsSignal: WritableSignal<IPostStore> = signal<IPostStore>({} as IPostStore)
   commentsSignal: WritableSignal<ICommentStore> = signal<ICommentStore>({} as ICommentStore)
   initBlogSignal: WritableSignal<boolean> = signal<boolean>(false)
+  blogStoreSignal: WritableSignal<IBlogStore> = signal({} as IBlogStore)
 
   initialize(data: any[]) {
     const authors: IAuthorStore = {
@@ -31,11 +41,11 @@ export class BlogStore {
     };
 
     data.forEach((post: any) => {
-      const postAuthor: IAuthor = post.author;
+      const postAuthor: IAuthorModel = post.author;
       authors.byId[postAuthor.id] = postAuthor;
       authors.allIds.push(postAuthor.id);
 
-      const postComments = post.comments.map((comment: IComment) => {
+      const postComments = post.comments.map((comment: ICommentModel) => {
         const commentAuthor = comment.author;
         authors.byId[commentAuthor.id] = commentAuthor;
         authors.allIds.push(commentAuthor.id);
@@ -61,26 +71,23 @@ export class BlogStore {
     this.postsSignal.set(posts)
     this.commentsSignal.set(comments)
     this.initBlogSignal.set(true);
+    this.blogStoreSignal.set({posts, comments, authors});
   }
 
-  private allPostsComputed(): Signal<IPost[]> {
+  allPostsComputed(): Signal<IPostModel[]> {
     return computed(
       () => this.initBlogSignal() ? this.postsSignal().allIds.map(id => this.postsSignal().byId[id]) : []
     )
   };
 
-  allPosts(): IPost[] {
-    return this.allPostsComputed()();
-  }
-
-  private getCommentsComputed(postId: string) {
+  /*getCommentsComputed(postId: string) {
     return computed(() =>
       this.postsSignal().byId[postId].comments.map(commentId => this.commentsSignal().byId[commentId])
     );
-  }
+  }*/
 
   getCommentsForPost(postId: string) {
-    return this.getCommentsComputed(postId)();
+    return this.postsSignal().byId[postId].comments.map(commentId => this.commentsSignal().byId[commentId])
   }
 
   private getAuthorComputed(authorId: string) {
@@ -99,6 +106,33 @@ export class BlogStore {
         byId: {
           ...value.byId,
           [id]: {...value.byId[id], body: body}
+        }
+      }));
+    }
+  }
+
+  updateComment(id: string, comment: string) {
+    const currentComments = this.commentsSignal();
+    this.commentsSignal.update((value) => ({
+      ...value,
+      byId: {
+        ...value.byId,
+        [id]: {
+          ...value.byId[id],
+          comment: comment,
+        }
+      }
+    }))
+  }
+
+  updateAuthor(id: string, name: string) {
+    const currentAuthors = this.authorsSignal();
+    if (currentAuthors.byId[id]) {
+      this.authorsSignal.update((value) => ({
+        ...value,
+        byId: {
+          ...value.byId,
+          [id]: {...value.byId[id], name: name}
         }
       }));
     }

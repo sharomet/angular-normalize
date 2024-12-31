@@ -1,6 +1,7 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, effect, inject, OnInit, signal} from '@angular/core';
 import {BlogStore} from '../../store/blog/blog.store';
 import {HttpClient} from '@angular/common/http';
+import {WebSocketService} from '../../common/services/web-socket.service';
 
 @Component({
   selector: 'app-blog',
@@ -8,51 +9,26 @@ import {HttpClient} from '@angular/common/http';
   templateUrl: './blog.component.html',
 })
 export class BlogComponent implements OnInit {
-  private socket!: WebSocket;
-  messages: string[] = [];
-  httpClient: HttpClient = inject(HttpClient);
+  private readonly httpClient: HttpClient = inject(HttpClient);
+  readonly webSocketService: WebSocketService = inject(WebSocketService);
   blogStore: BlogStore = inject(BlogStore);
+  allPostsSignal = this.blogStore.allPostsComputed();
 
   ngOnInit(): void {
-    this.socket = new WebSocket('ws://localhost:8055');
+    this.httpClient.get<any[]>('http://localhost:3000/blog')
+      .subscribe((data) => this.blogStore.initialize(data))
 
-    this.socket.onmessage = (event) => {
-      console.log('test1', event.data)
-      this.messages.push(event.data);
-    };
-
-    this.socket.onerror = (error) => {
-      console.error('WebSocket Error:', error);
-    };
-
-    this.socket.onclose = () => {
-      console.log('Close Connection');
-    };
-
-    /*this.httpClient.get<any[]>('http://localhost:3000/blog')
-      .subscribe((data) => this.blogStore.initialize(data))*/
-
-    /*setTimeout(() => {
+    setTimeout(() => {
       this.blogStore.updatePost('0F94E346-01D0-46CD-8A42-37BE4F865394', 'Update Post')
-    }, 3000)*/
+      this.blogStore.updateComment('4F94E346-01D0-46CD-8A42-37BE4F865390', 'Update Comment');
+    }, 2000)
 
-    /*const posts = this.blogStore.allPosts();
-    posts().forEach((post) => {
-      console.log(post)
-    })*/
+
     /*const data = this.blogStore.getCommentsForPost('0F94E346-01D0-46CD-8A42-37BE4F865394');
     console.log(data())*/
   }
 
   sendMessage(): void {
-    if (this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send('Client Test 123');
-    } else {
-      console.error('Socket not connected');
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.socket.close();
+    this.webSocketService.sendMessage('test message');
   }
 }

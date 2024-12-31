@@ -1,18 +1,18 @@
-export interface IPost {
+export interface IPostModel {
   id: string;
   author: string;
   body: string;
   comments: string[];
 }
 
-export interface IAuthor {
+export interface IAuthorModel {
   id: string;
   name: string;
 }
 
-export interface IComment {
+export interface ICommentModel {
   id: string;
-  author: IAuthor;
+  author: IAuthorModel;
   comment: string;
 }
 
@@ -27,7 +27,7 @@ export interface IPostStore {
 }
 
 export interface IAuthorStore {
-  byId: Record<string, IAuthor>;
+  byId: Record<string, IAuthorModel>;
   allIds: string[];
 }
 
@@ -44,4 +44,10 @@ export interface IBlogStore {
   posts: IPostStore,
   comments: ICommentStore,
   authors: IAuthorStore,
+}
+
+export interface ICommentData {
+  id: string;
+  author: string;
+  comment: string;
 }

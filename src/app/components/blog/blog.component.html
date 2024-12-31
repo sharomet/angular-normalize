@@ -1,9 +1,20 @@
 <div class="container">
+  <h1>{{webSocketService.getMessages()}}</h1>
   <button type="button" (click)="sendMessage()">Send Message</button>
-  @for (post of this.blogStore.allPosts(); track post.id) {
-    <h1>{{ post.body }}</h1>
+  <br>
+  @for (post of allPostsSignal(); track post.id) {
+    <div>
+      <b>Post Body:</b>
+      <p>{{ post.body }}</p>
+    </div>
+    <div>
+      <b>Author:</b>
+      <p>
+        <em>{{blogStore.getAuthorById(post.author).name}}</em>
+      </p>
+    </div>
     <h2>Comments</h2>
-    @for (comment of this.blogStore.getCommentsForPost(post.id); track comment.id) {
+    @for (comment of blogStore.getCommentsForPost(post.id); track comment.id) {
       <p>{{ comment.id }}</p>
       <p>{{ comment.comment }}</p>
     }
