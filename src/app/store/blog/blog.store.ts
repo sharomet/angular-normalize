@@ -7,7 +7,7 @@ import {
   IAuthorModel,
   ICommentModel,
   ICommentData,
-  IBlogStore
+  IBlogStore, IBlog
 } from './blog';
 
 interface NormalizedData {
@@ -25,7 +25,7 @@ export class BlogStore {
   commentsSignal: WritableSignal<ICommentStore> = signal<ICommentStore>({} as ICommentStore)
   initBlogSignal: WritableSignal<boolean> = signal<boolean>(false)
 
-  initialize(data: any[]) {
+  initialize(data: IBlog[]) {
     const authors: IAuthorStore = {
       byId: {},
       allIds: [],
@@ -72,7 +72,7 @@ export class BlogStore {
     this.initBlogSignal.set(true);
   }
 
-  getDenormalizeDataComputed = computed(() => {
+  getDenormalizeDataComputed: Signal<IBlog[]> = computed(() => {
     if (!this.initBlogSignal()) {
       return [];
     }

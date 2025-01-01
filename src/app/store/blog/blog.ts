@@ -51,3 +51,10 @@ export interface ICommentData {
   author: string;
   comment: string;
 }
+
+export interface IBlog {
+  id: string;
+  author: IAuthorModel;
+  body: string;
+  comments: ICommentModel[];
+}

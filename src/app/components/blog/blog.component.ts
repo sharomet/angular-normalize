@@ -2,6 +2,7 @@ import {Component, computed, effect, inject, OnInit, signal} from '@angular/core
 import {BlogStore} from '../../store/blog/blog.store';
 import {HttpClient} from '@angular/common/http';
 import {WebSocketService} from '../../common/services/web-socket.service';
+import {IBlog} from '../../store/blog/blog';
 
 @Component({
   selector: 'app-blog',
@@ -24,7 +25,7 @@ export class BlogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.httpClient.get<any[]>('http://localhost:3000/blog')
+    this.httpClient.get<IBlog[]>('http://localhost:3000/blog')
       .subscribe((data) => this.blogStore.initialize(data))
   }
 
