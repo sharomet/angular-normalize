@@ -3,10 +3,13 @@ import {BlogStore} from '../../store/blog/blog.store';
 import {HttpClient} from '@angular/common/http';
 import {WebSocketService} from '../../common/services/web-socket.service';
 import {IBlog} from '../../store/blog/blog';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-blog',
   standalone: true,
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './blog.component.html',
 })
 export class BlogComponent implements OnInit {
@@ -14,8 +17,14 @@ export class BlogComponent implements OnInit {
   readonly webSocketService: WebSocketService = inject(WebSocketService);
   blogStore: BlogStore = inject(BlogStore);
   postsSignal = this.blogStore.getDenormalizeDataComputed;
+  form: FormGroup;
+  private formBuilder: FormBuilder = inject(FormBuilder);
 
   constructor() {
+    this.form = this.formBuilder.group({
+      posts: this.formBuilder.array([])
+    })
+
     effect(() => {
       if (!this.webSocketService.messageSignal()) {
         return;
@@ -27,6 +36,10 @@ export class BlogComponent implements OnInit {
   ngOnInit(): void {
     this.httpClient.get<IBlog[]>('http://localhost:3000/blog')
       .subscribe((data) => this.blogStore.initialize(data))
+  }
+
+  submitForm() {
+    console.log('test', this.form)
   }
 
   sendMessage(): void {

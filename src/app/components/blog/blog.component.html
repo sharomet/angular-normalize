@@ -18,4 +18,17 @@
       <p>{{ comment.comment }}</p>
     }
   }
+
+  <form [formGroup]="form" (ngSubmit)="submitForm()">
+    <div formArrayName="posts">
+      @for (post of postsSignal(); let idx = $index; track post.id) {
+        <div [formGroupName]="idx">
+          <label for="body">Post Text</label>
+          <input type="text" id="body" formControlName="body">
+        </div>
+      }
+    </div>
+    <br>
+    <button type="submit">Send</button>
+  </form>
 </div>
