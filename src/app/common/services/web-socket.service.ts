@@ -7,7 +7,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 export class WebSocketService {
   private socket!: WebSocket;
   private messagesSubject = new BehaviorSubject<any | null>(null);
-  private messageSignal: WritableSignal<any> = signal(null)
+  messageSignal: WritableSignal<any> = signal(null)
 
   constructor() {
     this.connect();
@@ -17,7 +17,7 @@ export class WebSocketService {
     this.socket = new WebSocket('ws://localhost:8055');
 
     this.socket.onmessage = (event) => {
-      this.messageSignal.set(event.data);
+      this.messageSignal.set(JSON.parse(event.data));
       this.messagesSubject.next(event.data);
     };
 
@@ -35,13 +35,8 @@ export class WebSocketService {
     if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(message);
     } else {
-      console.error('WebSocket не подключён');
+      console.error('WebSocket not Connected');
     }
-  }
-
-  getMessages(): Signal<any> {
-    return this.messageSignal();
-    //return this.messagesSubject.asObservable();
   }
 
   ngOnDestroy(): void {

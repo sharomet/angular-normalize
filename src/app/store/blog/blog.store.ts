@@ -24,7 +24,6 @@ export class BlogStore {
   postsSignal: WritableSignal<IPostStore> = signal<IPostStore>({} as IPostStore)
   commentsSignal: WritableSignal<ICommentStore> = signal<ICommentStore>({} as ICommentStore)
   initBlogSignal: WritableSignal<boolean> = signal<boolean>(false)
-  blogStoreSignal: WritableSignal<IBlogStore> = signal({} as IBlogStore)
 
   initialize(data: any[]) {
     const authors: IAuthorStore = {
@@ -71,32 +70,22 @@ export class BlogStore {
     this.postsSignal.set(posts)
     this.commentsSignal.set(comments)
     this.initBlogSignal.set(true);
-    this.blogStoreSignal.set({posts, comments, authors});
   }
 
-  allPostsComputed(): Signal<IPostModel[]> {
-    return computed(
-      () => this.initBlogSignal() ? this.postsSignal().allIds.map(id => this.postsSignal().byId[id]) : []
-    )
-  };
-
-  /*getCommentsComputed(postId: string) {
-    return computed(() =>
-      this.postsSignal().byId[postId].comments.map(commentId => this.commentsSignal().byId[commentId])
-    );
-  }*/
-
-  getCommentsForPost(postId: string) {
-    return this.postsSignal().byId[postId].comments.map(commentId => this.commentsSignal().byId[commentId])
-  }
-
-  private getAuthorComputed(authorId: string) {
-    return computed(() => this.authorsSignal().byId[authorId]);
-  }
-
-  getAuthorById(authorId: string) {
-    return this.getAuthorComputed(authorId)()
-  }
+  getDenormalizeDataComputed = computed(() => {
+    if (!this.initBlogSignal()) {
+      return [];
+    }
+    return this.postsSignal().allIds.map(postId => {
+      const post = this.postsSignal().byId[postId];
+      const author = this.authorsSignal().byId[post.author];
+      const comments = post.comments.map(commentId => ({
+        ...this.commentsSignal().byId[commentId],
+        author: this.authorsSignal().byId[this.commentsSignal().byId[commentId].author]
+      }));
+      return { ...post, author, comments };
+    });
+  })
 
   updatePost(id: string, body: string) {
     const currentPosts = this.postsSignal();

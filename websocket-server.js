@@ -6,10 +6,16 @@ const wss = new WebSocket.Server({port});
 wss.on('connection', (ws) => {
   console.log('Client connected');
   ws.on('message', (message) => {
-    console.log(`Message: ${message}`);
+    let jsonMessage;
+    try {
+      jsonMessage = JSON.stringify(JSON.parse(message));
+    } catch (error) {
+      console.error('Ошибка парсинга входящего сообщения:', error);
+      jsonMessage = JSON.stringify({error: 'Invalid JSON'});
+    }
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(`Server Response: ${message}`);
+        client.send(jsonMessage);
       }
     });
   });
