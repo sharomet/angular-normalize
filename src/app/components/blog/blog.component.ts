@@ -31,10 +31,10 @@ export class BlogComponent implements OnInit {
       posts: this.formBuilder.array([])
     });
     setTimeout(() => {
-    this.formGroup = this.formBuilder.group({
-      posts: this.formBuilder.array(this.postsSignal().map(post => this.postFormGroup(post)))
-    })
-    }, 2000)
+      this.formGroup = this.formBuilder.group({
+        posts: this.formBuilder.array(this.postsSignal().map(post => this.postFormGroup(post)))
+      })
+    }, 1000)
   }
 
   ngOnInit(): void {
@@ -66,6 +66,7 @@ export class BlogComponent implements OnInit {
   }
 
   submitForm() {
+    //form.invalid
     console.log('test', this.formGroup)
   }
 

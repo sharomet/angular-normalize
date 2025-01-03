@@ -30,22 +30,22 @@
           </div>
 
           <div formArrayName="comments">
-            @if(getCommentsArray(i); as commentsArray) {
-            @for (comment of getCommentsArray(i).controls; let j = $index; track 'comment-' + j) {
-              <div [formGroupName]="j">
-                <label>
-                  Comment:
-                  <input formControlName="comment"/>
-                </label>
-              </div>
-            }
+            @if (getCommentsArray(i); as commentsArray) {
+              @for (comment of commentsArray.controls; let j = $index; track 'comment-' + j) {
+                <div [formGroupName]="j">
+                  <label>
+                    Comment:
+                    <input formControlName="comment"/>
+                  </label>
+                </div>
+              }
             }
           </div>
         </div>
       }
     </div>
     <br>
-    <button type="submit">Send</button>
+    <button type="submit" [disabled]="formGroup.invalid">Send</button>
   </form>
 
 </div>
