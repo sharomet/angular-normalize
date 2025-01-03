@@ -28,7 +28,6 @@
             <label for="body">Post Text</label>
             <input type="text" id="body" formControlName="body">
           </div>
-
           <div formArrayName="comments">
             @if (getCommentsArray(i); as commentsArray) {
               @for (comment of commentsArray.controls; let j = $index; track 'comment-' + j) {

@@ -66,7 +66,6 @@ export class BlogComponent implements OnInit {
   }
 
   submitForm() {
-    //form.invalid
     console.log('test', this.formGroup)
   }
 
