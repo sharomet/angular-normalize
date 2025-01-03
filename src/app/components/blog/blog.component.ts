@@ -2,9 +2,8 @@ import {Component, computed, effect, inject, OnInit, signal} from '@angular/core
 import {BlogStore} from '../../store/blog/blog.store';
 import {HttpClient} from '@angular/common/http';
 import {WebSocketService} from '../../common/services/web-socket.service';
-import {IBlog} from '../../store/blog/blog';
-import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {Subscription} from 'rxjs';
+import {IBlog, ICommentModel} from '../../store/blog/blog';
+import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 
 @Component({
   selector: 'app-blog',
@@ -17,20 +16,25 @@ export class BlogComponent implements OnInit {
   readonly webSocketService: WebSocketService = inject(WebSocketService);
   blogStore: BlogStore = inject(BlogStore);
   postsSignal = this.blogStore.getDenormalizeDataComputed;
-  form: FormGroup;
+  formGroup: FormGroup;
   private formBuilder: FormBuilder = inject(FormBuilder);
 
   constructor() {
-    this.form = this.formBuilder.group({
-      posts: this.formBuilder.array([])
-    })
-
     effect(() => {
       if (!this.webSocketService.messageSignal()) {
         return;
       }
       this.blogStore.initialize(this.webSocketService.messageSignal());
     });
+
+    this.formGroup = this.formBuilder.group({
+      posts: this.formBuilder.array([])
+    });
+    setTimeout(() => {
+    this.formGroup = this.formBuilder.group({
+      posts: this.formBuilder.array(this.postsSignal().map(post => this.postFormGroup(post)))
+    })
+    }, 2000)
   }
 
   ngOnInit(): void {
@@ -38,8 +42,31 @@ export class BlogComponent implements OnInit {
       .subscribe((data) => this.blogStore.initialize(data))
   }
 
+  postFormGroup(post: IBlog) {
+    return this.formBuilder.group({
+      body: [post.body, Validators.required],
+      comments: this.formBuilder.array(
+        post.comments.map(comment => this.commentFormGroup(comment)) || []
+      ),
+    });
+  }
+
+  commentFormGroup(comment: ICommentModel) {
+    return this.formBuilder.group({
+      comment: [comment.comment, Validators.required],
+    });
+  }
+
+  get postsArray(): FormArray {
+    return this.formGroup.get('posts') as FormArray;
+  }
+
+  getCommentsArray(index: number): FormArray {
+    return this.postsArray.at(index).get('comments') as FormArray;
+  }
+
   submitForm() {
-    console.log('test', this.form)
+    console.log('test', this.formGroup)
   }
 
   sendMessage(): void {

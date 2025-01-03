@@ -1,7 +1,7 @@
 <div class="container">
   <button type="button" (click)="sendMessage()">Send Message</button>
   <br>
-  @for (post of postsSignal(); track post.id) {
+  <!--@for (post of postsSignal(); track post.id) {
     <div>
       <b>Post Body:</b>
       <p>{{ post.body }}</p>
@@ -17,18 +17,35 @@
       <p>{{ comment.id }}</p>
       <p>{{ comment.comment }}</p>
     }
-  }
+  }-->
 
-  <form [formGroup]="form" (ngSubmit)="submitForm()">
+
+  <form [formGroup]="formGroup" (ngSubmit)="submitForm()">
     <div formArrayName="posts">
-      @for (post of postsSignal(); let idx = $index; track post.id) {
-        <div [formGroupName]="idx">
-          <label for="body">Post Text</label>
-          <input type="text" id="body" formControlName="body">
+      @for (post of postsArray.controls; let i = $index; track 'post-' + i) {
+        <div [formGroupName]="i">
+          <div>
+            <label for="body">Post Text</label>
+            <input type="text" id="body" formControlName="body">
+          </div>
+
+          <div formArrayName="comments">
+            @if(getCommentsArray(i); as commentsArray) {
+            @for (comment of getCommentsArray(i).controls; let j = $index; track 'comment-' + j) {
+              <div [formGroupName]="j">
+                <label>
+                  Comment:
+                  <input formControlName="comment"/>
+                </label>
+              </div>
+            }
+            }
+          </div>
         </div>
       }
     </div>
     <br>
     <button type="submit">Send</button>
   </form>
+
 </div>
