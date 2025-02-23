@@ -4,6 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {WebSocketService} from '../../common/services/web-socket.service';
 import {IBlog, ICommentModel} from '../../store/blog/blog';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {map} from 'rxjs';
 
 @Component({
   selector: 'app-blog',
@@ -13,33 +14,56 @@ import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Val
 })
 export class BlogComponent implements OnInit {
   private readonly httpClient: HttpClient = inject(HttpClient);
-  readonly webSocketService: WebSocketService = inject(WebSocketService);
+  //readonly webSocketService: WebSocketService = inject(WebSocketService);
   blogStore: BlogStore = inject(BlogStore);
   postsSignal = this.blogStore.getDenormalizeDataComputed;
-  formGroup: FormGroup;
+  formGroup!: FormGroup;
   private formBuilder: FormBuilder = inject(FormBuilder);
 
   constructor() {
-    effect(() => {
+    /*effect(() => {
       if (!this.webSocketService.messageSignal()) {
         return;
       }
       this.blogStore.initialize(this.webSocketService.messageSignal());
-    });
+    });*/
 
-    this.formGroup = this.formBuilder.group({
+    /*this.formGroup = this.formBuilder.group({
       posts: this.formBuilder.array([])
-    });
-    setTimeout(() => {
+    });*/
+    /*setTimeout(() => {
       this.formGroup = this.formBuilder.group({
         posts: this.formBuilder.array(this.postsSignal().map(post => this.postFormGroup(post)))
       })
-    }, 1000)
+    }, 1000)*/
   }
 
   ngOnInit(): void {
     this.httpClient.get<IBlog[]>('http://localhost:3000/blog')
+      .pipe(
+        map((responseData: IBlog[]) => {
+          this.formGroup = this.formBuilder.group({
+            posts: this.formBuilder.array(
+              responseData.map(post => this.postForm(post))
+            ),
+          });
+          return responseData
+        }),
+      )
       .subscribe((data) => this.blogStore.initialize(data))
+  }
+
+  private postForm(post: IBlog) {
+    return this.formBuilder.group({
+      body: [post.body, Validators.required],
+      comments: this.formBuilder.array(post.comments.map(comment => this.commentForm(comment)))
+    });
+  }
+
+  private commentForm(comment: ICommentModel) {
+    return this.formBuilder.group({
+      comment: [comment.comment, Validators.required],
+    });
   }
 
   postFormGroup(post: IBlog) {
@@ -132,6 +156,6 @@ export class BlogComponent implements OnInit {
         ]
       }
     ];
-    this.webSocketService.sendMessage(JSON.stringify(data));
+    //this.webSocketService.sendMessage(JSON.stringify(data));
   }
 }

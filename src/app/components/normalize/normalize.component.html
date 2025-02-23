@@ -1,0 +1,24 @@
+<div class="container">
+  @for(post of blogData(); track 'post-' + post.id) {
+      <article>
+          <p>Body: {{post.body}}</p>
+          <p>
+              Author:
+              <em>{{post.author.name}}</em>
+          </p>
+          <div>
+              <button type="button" (click)="addComment(post.author.id, post.id)">
+                  Add Comment
+              </button>
+          </div>
+          <div>
+              <p>Comments:</p>
+              @for(comment of post.comments; track 'comment-' + comment.id) {
+                  <div style="padding-left: 2rem">
+                      {{comment.comment}}
+                  </div>
+              }
+          </div>
+      </article>
+  }
+</div>

@@ -20,7 +20,7 @@
   }-->
 
 
-  <form [formGroup]="formGroup" (ngSubmit)="submitForm()">
+  <!--<form [formGroup]="formGroup" (ngSubmit)="submitForm()">
     <div formArrayName="posts">
       @for (post of postsArray.controls; let i = $index; track 'post-' + i) {
         <div [formGroupName]="i">
@@ -45,6 +45,33 @@
     </div>
     <br>
     <button type="submit" [disabled]="formGroup.invalid">Send</button>
-  </form>
+  </form>-->
 
+
+  @if (formGroup) {
+    <form [formGroup]="formGroup" (ngSubmit)="submitForm()">
+      <!--<div formArrayName="posts">
+        @for (post of formGroup.controls['posts'].controls; let i = $index; track 'post-' + i) {
+          <div [formGroupName]="i">
+            <div>
+              <label for="body">Post Text</label>
+              <input type="text" id="body" formControlName="body">
+            </div>
+            <div formArrayName="comments">
+              @for (comment of getCommentsArray(i).controls; let j = $index; track 'comment-' + j) {
+                <div [formGroupName]="j">
+                  <label>
+                    Comment:
+                    <input formControlName="comment"/>
+                  </label>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>-->
+      <br>
+      <button type="submit" [disabled]="formGroup.invalid">Send</button>
+    </form>
+  }
 </div>
