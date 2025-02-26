@@ -10,10 +10,13 @@ import {IBlog} from '../../store/blog/blog';
 export class NormalizeComponent implements OnInit {
     private blogStore: BlogStore = inject(BlogStore);
     blogData: Signal<IBlog[]> = this.blogStore.getDenormalizeDataComputed;
+    authorData = this.blogStore.getAuthorsComputed;
 
     ngOnInit(): void {
         this.blogStore.fetchData();
-        setTimeout(() => this.updateComment(), 2000);
+        setTimeout(() => {
+            this.updateComment();
+        }, 2000);
     }
 
     updateComment() {

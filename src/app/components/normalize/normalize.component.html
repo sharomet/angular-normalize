@@ -1,6 +1,9 @@
 <div class="container">
   @for(post of blogData(); track 'post-' + post.id) {
       <article>
+          <p>
+              <b>Title: {{post.title}}</b>
+          </p>
           <p>Body: {{post.body}}</p>
           <p>
               Author:
@@ -21,4 +24,19 @@
           </div>
       </article>
   }
+    <div>
+        <p>Add new Comment</p>
+        <label for="author">Author</label> <br>
+        <select name="author" id="author">
+            @for (author of authorData(); track 'author-' + author.id) {
+                <option [value]="author.id">
+                    {{author.name}}
+                </option>
+            }
+        </select>
+        <br>
+        <br>
+        <label for="comment">Comment</label> <br>
+        <textarea name="comment" id="comment" placeholder="Comment"></textarea>
+    </div>
 </div>

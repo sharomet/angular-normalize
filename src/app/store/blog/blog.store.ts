@@ -26,6 +26,13 @@ export class BlogStore {
             .subscribe((data) => this.initialize(data))
     }
 
+    addNewElement(currentElement: { byId: Record<string, any>, allIds: string[] }, newElement: { id: string }) {
+        if (!currentElement.allIds.includes(newElement.id)) {
+            currentElement.byId[newElement.id] = newElement;
+            currentElement.allIds.push(newElement.id);
+        }
+    }
+
     initialize(data: IBlog[]) {
         const authors: IAuthorStore = {
             byId: {},
@@ -42,13 +49,11 @@ export class BlogStore {
 
         data.forEach((post: any) => {
             const postAuthor: IAuthorModel = post.author;
-            authors.byId[postAuthor.id] = postAuthor;
-            authors.allIds.push(postAuthor.id);
+            this.addNewElement(authors, postAuthor);
 
             const postComments = post.comments.map((comment: ICommentModel) => {
                 const commentAuthor = comment.author;
-                authors.byId[commentAuthor.id] = commentAuthor;
-                authors.allIds.push(commentAuthor.id);
+                this.addNewElement(authors, commentAuthor);
 
                 comments.byId[comment.id] = {
                     id: comment.id,
@@ -91,6 +96,13 @@ export class BlogStore {
             }));
             return {...post, author, comments};
         });
+    })
+
+    getAuthorsComputed = computed(() => {
+        if (!this.initBlogSignal()) {
+            return [];
+        }
+        return this.authorsSignal().allIds.map(authorId => this.authorsSignal().byId[authorId]);
     })
 
     updatePost(id: string, body: string) {
