@@ -1,22 +1,15 @@
-import {computed, inject, Injectable, Signal, signal, WritableSignal} from '@angular/core';
+import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import {
     ICommentStore,
     IPostStore,
     IAuthorStore,
-    IPostModel,
     IAuthorModel,
     ICommentModel,
-    ICommentData,
-    IBlogStore, IBlog
+    IBlog
 } from './blog';
-import {HttpClient} from '@angular/common/http';
-import {GUID} from '../../common/helpers/guid.helper';
-
-interface NormalizedData {
-    posts: Record<string, IPostStore>;
-    users: Record<string, IAuthorStore>;
-    comments: Record<string, ICommentStore>;
-}
+import { HttpClient } from '@angular/common/http';
+import { GUID } from '../../common/helpers/guid.helper';
+import { produce } from "immer"
 
 @Injectable({
     providedIn: 'root'
@@ -62,18 +55,23 @@ export class BlogStore {
                     author: commentAuthor.id,
                     comment: comment.comment,
                 };
+                comments.allIds.push(comment.id);
                 return comment.id;
             });
 
             posts.byId[post.id] = {
                 id: post.id,
                 author: postAuthor.id,
+                title: post.title,
                 body: post.body,
                 comments: postComments,
             };
             posts.allIds.push(post.id);
         });
 
+        console.log('authors', authors)
+        console.log('posts', posts)
+        console.log('comments', comments)
         this.authorsSignal.set(authors)
         this.postsSignal.set(posts)
         this.commentsSignal.set(comments)
@@ -123,36 +121,17 @@ export class BlogStore {
 
     addComment(authorId: string, postId: string, comment: string) {
         const commentId: string = GUID();
-        this.commentsSignal.update((value) => ({
-            ...value,
-            byId: {
-                ...value.byId,
-                [commentId]: {
-                    author: authorId,
-                    comment: comment,
-                    id: commentId
-                }
+        this.commentsSignal.update((value: ICommentStore) => produce(value, draftState => {
+            draftState.byId[commentId] = {
+                author: authorId,
+                comment: comment,
+                id: commentId
             }
+            draftState.allIds.push(commentId);
+        }));
+        this.postsSignal.update((value: IPostStore) => produce(value, draftState => {
+            draftState.byId[postId].comments.push(commentId);
         }))
-
-        this.postsSignal.update((value) => {
-            const comments = value.byId[postId].comments;
-            comments.push(commentId)
-            return {
-                ...value,
-                byId: {
-                    ...value.byId,
-                    [postId]: {
-                        ...value.byId[postId],
-                        comments: [...comments]
-                    }
-                }
-            }
-        });
-    }
-
-    getAuthorById(id: string) {
-        return this.authorsSignal().byId[id];
     }
 
     updateAuthor(id: string, name: string) {

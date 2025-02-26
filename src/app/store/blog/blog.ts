@@ -1,6 +1,7 @@
 export interface IPostModel {
   id: string;
   author: string;
+  title: string;
   body: string;
   comments: string[];
 }
@@ -17,12 +18,7 @@ export interface ICommentModel {
 }
 
 export interface IPostStore {
-  byId: Record<string, {
-    id: string;
-    author: string;
-    body: string;
-    comments: string[];
-  }>;
+  byId: Record<string, IPostModel>;
   allIds: string[];
 }
 
