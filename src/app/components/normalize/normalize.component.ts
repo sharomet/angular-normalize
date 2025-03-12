@@ -14,9 +14,6 @@ export class NormalizeComponent implements OnInit {
 
     ngOnInit(): void {
         this.blogStore.fetchData();
-        setTimeout(() => {
-            this.updateComment();
-        }, 2000);
     }
 
     updateComment() {

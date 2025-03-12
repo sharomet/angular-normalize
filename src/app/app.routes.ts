@@ -11,6 +11,6 @@ export const routes: Routes = [
   },
   {
     path: 'blog',
-    loadComponent: () => import('./components/blog/blog.component').then((component) => component.BlogComponent)
+    loadComponent: () => import('./features/blog/blog.component').then((component) => component.BlogComponent)
   },
 ];
