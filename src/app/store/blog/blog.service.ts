@@ -1,5 +1,5 @@
-import { inject, Injectable, signal, WritableSignal } from '@angular/core';
-import { TAuthor, TComment, TPost } from '../../features/blog/types/blog.type';
+import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
+import { TAuthor, TComment, TPost } from '../../features/blog-bk/types/blog.type';
 import { HttpClient } from '@angular/common/http';
 import { TAuthorStore, TCommentStore, TPostStore } from './types/blog-store.type';
 
@@ -11,6 +11,7 @@ export class BlogService {
     authorsSignal: WritableSignal<TAuthorStore> = signal<TAuthorStore>({} as TAuthorStore)
     postsSignal: WritableSignal<TPostStore> = signal<TPostStore>({} as TPostStore)
     commentsSignal: WritableSignal<TCommentStore> = signal<TCommentStore>({} as TCommentStore)
+    selectedPostId: WritableSignal<string> = signal<string>('');
     initBlogSignal: WritableSignal<boolean> = signal<boolean>(false)
 
     fetchData() {
@@ -71,5 +72,28 @@ export class BlogService {
         this.postsSignal.set(posts)
         this.commentsSignal.set(comments)
         this.initBlogSignal.set(true);
+        console.log(posts)
     }
+
+    getBlogDataComputed: Signal<TPost[]> = computed(() => {
+        if (!this.initBlogSignal()) {
+            return [];
+        }
+        return this.postsSignal().allIds.map(postId => {
+            const post = this.postsSignal().byId[postId];
+            const author = this.authorsSignal().byId[post.author];
+            const comments = post.comments.map(commentId => ({
+                ...this.commentsSignal().byId[commentId],
+                author: this.authorsSignal().byId[this.commentsSignal().byId[commentId].author]
+            }));
+            return {...post, author, comments};
+        });
+    })
+
+    getPostComputed: Signal<any> = computed(() => {
+        if (!this.selectedPostId().length) {
+            return {} as TPost;
+        }
+        return this.postsSignal().byId[this.selectedPostId()];
+    });
 }

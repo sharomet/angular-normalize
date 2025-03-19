@@ -1,4 +1,4 @@
-import { TAuthorBase, TCommentBase, TPostBase } from '../../../features/blog/types/blog.type';
+import { TAuthorBase, TCommentBase, TPostBase } from '../../../features/blog-bk/types/blog.type';
 
 export type TPostBaseStore = TPostBase & {
     author: string;

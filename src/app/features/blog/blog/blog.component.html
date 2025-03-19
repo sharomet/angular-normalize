@@ -1,0 +1,20 @@
+<div class="container">
+    <div class="blog-container">
+        @for (post of blogData(); track 'post-' + post.id) {
+            <article class="blog-card">
+                <p>
+                    <b>{{ post.title }}</b>
+                </p>
+                <p>{{ post.body }}</p>
+                <p>
+                    <em>Author: {{ post.author.name }}</em>
+                </p>
+                <p>
+                    <a [routerLink]="[post.id]">
+                        Read More
+                    </a>
+                </p>
+            </article>
+        }
+    </div>
+</div>
