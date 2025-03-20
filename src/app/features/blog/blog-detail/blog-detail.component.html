@@ -1,3 +1,15 @@
 <div class="container">
-    <h1>{{postData().title}}</h1>
+    @if (postData(); as post) {
+        <h1>{{ post.title }}</h1>
+        <p>{{ post.body }}</p>
+        @if (post.comments.length) {
+            <h2>Comments:</h2>
+            @for (comment of post.comments; track 'comment-' + comment.id) {
+                <div>
+                    <em>{{comment.author.name}}</em>
+                    <div>{{comment.comment}}</div>
+                </div>
+            }
+        }
+    }
 </div>

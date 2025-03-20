@@ -1,5 +1,5 @@
 import {Component, computed, effect, inject, OnInit, signal} from '@angular/core';
-import {BlogStore} from '../../store/blog/blog.store';
+import {BlogStoreBk} from '../../store/blog/blog.store-bk';
 import {HttpClient} from '@angular/common/http';
 import {WebSocketService} from '../../common/services/web-socket.service';
 import {IBlog, ICommentModel} from '../../store/blog/blog';
@@ -15,7 +15,7 @@ import {map} from 'rxjs';
 export class BlogComponent implements OnInit {
   private readonly httpClient: HttpClient = inject(HttpClient);
   //readonly webSocketService: WebSocketService = inject(WebSocketService);
-  blogStore: BlogStore = inject(BlogStore);
+  blogStore: BlogStoreBk = inject(BlogStoreBk);
   postsSignal = this.blogStore.getDenormalizeDataComputed;
   formGroup!: FormGroup;
   private formBuilder: FormBuilder = inject(FormBuilder);

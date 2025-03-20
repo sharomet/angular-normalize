@@ -1,5 +1,5 @@
 import {Component, inject, OnInit, signal, Signal} from '@angular/core';
-import {BlogStore} from '../../store/blog/blog.store';
+import {BlogStoreBk} from '../../store/blog/blog.store-bk';
 import {IBlog} from '../../store/blog/blog';
 
 @Component({
@@ -8,7 +8,7 @@ import {IBlog} from '../../store/blog/blog';
     templateUrl: './normalize.component.html',
 })
 export class NormalizeComponent implements OnInit {
-    private blogStore: BlogStore = inject(BlogStore);
+    private blogStore: BlogStoreBk = inject(BlogStoreBk);
     blogData: Signal<IBlog[]> = this.blogStore.getDenormalizeDataComputed;
     authorData = this.blogStore.getAuthorsComputed;
 

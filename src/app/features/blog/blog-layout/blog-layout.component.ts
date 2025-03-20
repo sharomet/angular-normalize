@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, Signal } from '@angular/core';
-import { BlogService } from '../../../store/blog/blog.service';
+import { BlogStore } from '../../../store/blog/blog.store';
 import { RouterOutlet } from '@angular/router';
 
 @Component({
@@ -8,7 +8,7 @@ import { RouterOutlet } from '@angular/router';
     templateUrl: './blog-layout.component.html',
 })
 export class BlogLayoutComponent implements OnInit {
-    private blogService: BlogService = inject(BlogService);
+    private blogService: BlogStore = inject(BlogStore);
     isLoaded: Signal<boolean> = this.blogService.isLoaded;
 
     ngOnInit(): void {
