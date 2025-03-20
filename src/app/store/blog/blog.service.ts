@@ -2,6 +2,7 @@ import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@a
 import { TAuthor, TComment, TPost } from '../../features/blog-bk/types/blog.type';
 import { HttpClient } from '@angular/common/http';
 import { TAuthorStore, TCommentStore, TPostStore } from './types/blog-store.type';
+import { IBlog } from './blog';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +13,7 @@ export class BlogService {
     postsSignal: WritableSignal<TPostStore> = signal<TPostStore>({} as TPostStore)
     commentsSignal: WritableSignal<TCommentStore> = signal<TCommentStore>({} as TCommentStore)
     selectedPostId: WritableSignal<string> = signal<string>('');
-    initBlogSignal: WritableSignal<boolean> = signal<boolean>(false)
+    private initBlogSignal: WritableSignal<boolean> = signal<boolean>(false)
 
     fetchData() {
         this.httpClient.get<TPost[]>('http://localhost:3000/blog')
@@ -72,8 +73,9 @@ export class BlogService {
         this.postsSignal.set(posts)
         this.commentsSignal.set(comments)
         this.initBlogSignal.set(true);
-        console.log(posts)
     }
+
+    isLoaded: Signal<boolean> = computed(() => this.initBlogSignal())
 
     getBlogDataComputed: Signal<TPost[]> = computed(() => {
         if (!this.initBlogSignal()) {

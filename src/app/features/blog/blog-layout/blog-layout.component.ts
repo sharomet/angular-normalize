@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, Signal } from '@angular/core';
 import { BlogService } from '../../../store/blog/blog.service';
 import { RouterOutlet } from '@angular/router';
 
@@ -9,6 +9,7 @@ import { RouterOutlet } from '@angular/router';
 })
 export class BlogLayoutComponent implements OnInit {
     private blogService: BlogService = inject(BlogService);
+    isLoaded: Signal<boolean> = this.blogService.isLoaded;
 
     ngOnInit(): void {
         this.blogService.fetchData();
