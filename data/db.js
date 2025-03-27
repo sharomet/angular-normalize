@@ -1,6 +1,7 @@
 module.exports = function () {
     return {
-        blog: require("./blog.js"),
-        users: require("./users.js")
+        blog: require("./blog"),
+        users: require("./users"),
+        comments: require("./comments"),
     };
 };
