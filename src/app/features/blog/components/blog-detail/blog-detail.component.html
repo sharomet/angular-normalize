@@ -1,5 +1,5 @@
 <div class="container">
-    @if (postData(); as post) {
+    @if (selectedPost(); as post) {
         <h1>{{ post.title }}</h1>
         <p>{{ post.body }}</p>
         @if (post.comments.length) {

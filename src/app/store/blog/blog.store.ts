@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { TAuthor, TComment, TPost } from '../../features/blog-bk/types/blog.type';
+import { TAuthor, TComment, TPost } from '../../features/blog/types/blog.type';
 import { TAuthorStore, TCommentStore, TPostStore } from './types/blog-store.type';
 import { BlogService } from '../../features/blog/serveices/blog.service';
 
@@ -8,10 +8,10 @@ import { BlogService } from '../../features/blog/serveices/blog.service';
 })
 export class BlogStore {
     private readonly blogService: BlogService = inject(BlogService);
-    authorsSignal: WritableSignal<TAuthorStore> = signal<TAuthorStore>({} as TAuthorStore)
-    postsSignal: WritableSignal<TPostStore> = signal<TPostStore>({} as TPostStore)
-    commentsSignal: WritableSignal<TCommentStore> = signal<TCommentStore>({} as TCommentStore)
-    selectedPostId: WritableSignal<string> = signal<string>('');
+    private authorsSignal: WritableSignal<TAuthorStore> = signal<TAuthorStore>({} as TAuthorStore)
+    private postsSignal: WritableSignal<TPostStore> = signal<TPostStore>({} as TPostStore)
+    private commentsSignal: WritableSignal<TCommentStore> = signal<TCommentStore>({} as TCommentStore)
+    private selectedPost: WritableSignal<TPost | null> = signal<TPost | null>(null);
     private initBlogSignal: WritableSignal<boolean> = signal<boolean>(false)
 
     fetchData() {
@@ -48,7 +48,6 @@ export class BlogStore {
             const postComments = post.comments.map((comment: TComment) => {
                 const commentAuthor = comment.author;
                 this.addNewElement(authors, commentAuthor);
-
                 comments.byId[comment.id] = {
                     id: comment.id,
                     author: commentAuthor.id,
@@ -74,9 +73,29 @@ export class BlogStore {
         this.initBlogSignal.set(true);
     }
 
-    isLoaded: Signal<boolean> = computed(() => this.initBlogSignal())
+    isLoaded: Signal<boolean> = computed(() => this.initBlogSignal());
 
-    getBlogDataComputed: Signal<TPost[]> = computed(() => {
+    setSelectedPost(id: string): void {
+        const post = this.postsSignal().byId[id];
+        if (!post) {
+            return;
+        }
+        this.selectedPost.set({
+            ...post,
+            author: this.authorsSignal().byId[post.author],
+            comments: post.comments.reduce((acc, commentId: string) => {
+                const comment = this.commentsSignal().byId[commentId];
+                if (!comment) return acc;
+                acc.push({
+                    ...comment,
+                    author: this.authorsSignal().byId[comment.author] || null,
+                });
+                return acc;
+            }, [] as TComment[]),
+        });
+    }
+
+    getBlogData: Signal<TPost[]> = computed(() => {
         if (!this.initBlogSignal()) {
             return [];
         }
@@ -91,21 +110,5 @@ export class BlogStore {
         });
     })
 
-    getPostComputed: Signal<TPost| null> = computed(() => {
-        const post = this.postsSignal().byId[this.selectedPostId()];
-        if (!post) {
-            return null;
-        }
-        return {
-            ...post,
-            author: this.authorsSignal().byId[post.author],
-            comments: post.comments.map((commentId) => {
-                const comment = this.commentsSignal().byId[commentId];
-                return comment ? {
-                    ...comment,
-                    author: this.authorsSignal().byId[comment.author] || null,
-                } : {} as TComment;
-            })
-        }
-    });
+    getSelectedPost: Signal<TPost | null> = computed(() => this.selectedPost());
 }

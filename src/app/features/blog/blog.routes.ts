@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { BlogLayoutComponent } from './blog-layout/blog-layout.component';
+import { BlogLayoutComponent } from './layout/blog-layout.component';
 
 export const BLOG_ROUTES: Routes = [
     {
@@ -8,12 +8,12 @@ export const BLOG_ROUTES: Routes = [
         children: [
             {
                 path: '',
-                loadComponent: () => import('./blog/blog.component')
+                loadComponent: () => import('./components/blog/blog.component')
                     .then((component) => component.BlogComponent)
             },
             {
                 path: ':id',
-                loadComponent: () => import('./blog-detail/blog-detail.component')
+                loadComponent: () => import('./components/blog-detail/blog-detail.component')
                     .then((component) => component.BlogDetailComponent)
             }
         ]

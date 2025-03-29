@@ -1,6 +1,6 @@
 import { Component, inject, Signal } from '@angular/core';
-import { TPost } from '../../blog-bk/types/blog.type';
-import { BlogStore } from '../../../store/blog/blog.store';
+import { TPost } from '../../types/blog.type';
+import { BlogStore } from '../../../../store/blog/blog.store';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -13,5 +13,5 @@ import { RouterLink } from '@angular/router';
 })
 export class BlogComponent {
     private readonly blogService: BlogStore = inject(BlogStore);
-    blogData: Signal<TPost[]> = this.blogService.getBlogDataComputed
+    blogData: Signal<TPost[]> = this.blogService.getBlogData
 }
