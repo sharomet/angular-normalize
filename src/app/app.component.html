@@ -1,20 +1,36 @@
 <div class="wrapper">
-  <header class="header">
-    <div class="container">
-      <ul class="nav">
-        <li>
-          <a [routerLink]="'/'">Home</a>
-        </li>
-        <li>
-          <a [routerLink]="'/normalize'">Normalize</a>
-        </li>
-        <li>
-          <a [routerLink]="'/blog'">Blog</a>
-        </li>
-      </ul>
-    </div>
-  </header>
-  <main class="main" style="margin-top: 1rem">
-    <router-outlet/>
-  </main>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/" routerLinkActive="active"
+                           [routerLinkActiveOptions]="{exact:true}">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/blog" routerLinkActive="active">
+                            Blog
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/normalize" routerLinkActive="active">
+                            Normalize
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main" style="margin-top: 1rem">
+        <router-outlet/>
+    </main>
 </div>
